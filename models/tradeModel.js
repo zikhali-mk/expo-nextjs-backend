@@ -33,15 +33,15 @@ const tradeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  setup: {
+  executionRate: {
+    type: Number,
+    required: true,
+  },
+  image: {
     type: String,
     required: true,
   },
   notes: {
-    type: String,
-    default: "",
-  },
-  psychology: {
     type: String,
     default: "",
   },

@@ -13,6 +13,7 @@ import {
   CircleDollarSign,
   Clock3,
   FileText,
+  Image as ImageIcon,
   Loader2,
   PencilLine,
   RefreshCw,
@@ -26,13 +27,11 @@ import {
   Trophy,
   XCircle,
   Activity,
-  Brain,
 } from "lucide-react";
 
 export default function TradeDetailsPage() {
   const params = useParams();
   const router = useRouter();
-
   const id = params?.id;
 
   const [trade, setTrade] = useState(null);
@@ -111,28 +110,6 @@ export default function TradeDetailsPage() {
   // ==========================================
   // ACCOUNT CHANGE CALCULATION
   // ==========================================
-  //
-  // We calculate the NET change required to move
-  // the account from the OLD trade result to the
-  // NEW trade result.
-  //
-  // Examples:
-  //
-  // PENDING -> WIN $100
-  // Account change = +100
-  //
-  // WIN $100 -> LOSE $50
-  // Reverse +100, apply -50
-  // Net account balance change = -150
-  //
-  // WIN $100 -> WIN $150
-  // Net change = +50
-  //
-  // LOSE $100 -> PENDING
-  // Reverse -100
-  // Net account balance change = +100
-  //
-  // ==========================================
 
   const calculateAccountChanges = (
     oldResult,
@@ -151,10 +128,7 @@ export default function TradeDetailsPage() {
     let profitChange = 0;
     let lossChange = 0;
 
-    // ------------------------------------------
-    // REMOVE OLD RESULT
-    // ------------------------------------------
-
+    // Remove old result
     if (oldResult === "WIN") {
       profitChange -= oldAmount;
     }
@@ -163,10 +137,7 @@ export default function TradeDetailsPage() {
       lossChange -= oldAmount;
     }
 
-    // ------------------------------------------
-    // APPLY NEW RESULT
-    // ------------------------------------------
-
+    // Apply new result
     if (newResult === "WIN") {
       profitChange += newAmount;
     }
@@ -174,10 +145,6 @@ export default function TradeDetailsPage() {
     if (newResult === "LOSE") {
       lossChange += newAmount;
     }
-
-    // ------------------------------------------
-    // BALANCE CHANGE
-    // ------------------------------------------
 
     const balanceChange =
       profitChange - lossChange;
@@ -205,15 +172,12 @@ export default function TradeDetailsPage() {
       return;
     }
 
-    // ------------------------------------------
-    // VALIDATE AMOUNT
-    // ------------------------------------------
-
     const newTotal =
       result === "PENDING"
         ? 0
         : Math.abs(Number(total));
 
+    // Validate amount
     if (
       (result === "WIN" || result === "LOSE") &&
       (total === "" ||
@@ -226,10 +190,6 @@ export default function TradeDetailsPage() {
       return;
     }
 
-    // ------------------------------------------
-    // CURRENT TRADE STATE
-    // ------------------------------------------
-
     const oldResult = String(
       trade?.result || "PENDING"
     ).toUpperCase();
@@ -238,14 +198,9 @@ export default function TradeDetailsPage() {
       Number(trade?.total || 0)
     );
 
-    // ------------------------------------------
-    // CALCULATE ACCOUNT CHANGE
-    // ------------------------------------------
-
     const {
       profitChange,
       lossChange,
-      balanceChange,
     } = calculateAccountChanges(
       oldResult,
       oldTotal,
@@ -253,10 +208,7 @@ export default function TradeDetailsPage() {
       newTotal
     );
 
-    // ------------------------------------------
-    // NOTHING CHANGED
-    // ------------------------------------------
-
+    // Nothing changed
     if (
       oldResult === result &&
       oldTotal === newTotal
@@ -269,8 +221,7 @@ export default function TradeDetailsPage() {
       setUpdating(true);
 
       // ========================================
-      // STEP 1
-      // UPDATE TRADE
+      // STEP 1 - UPDATE TRADE
       // ========================================
 
       const tradeResponse = await fetch(
@@ -298,24 +249,19 @@ export default function TradeDetailsPage() {
       }
 
       // ========================================
-      // STEP 2
-      // UPDATE ACCOUNT ONCE
+      // STEP 2 - UPDATE ACCOUNT
       // ========================================
 
       const accountPayload = {};
 
-      // Profit adjustment
       if (profitChange !== 0) {
         accountPayload.profit = profitChange;
       }
 
-      // Loss adjustment
       if (lossChange !== 0) {
         accountPayload.loss = lossChange;
       }
 
-      // Only call account API if an account
-      // adjustment is actually required.
       if (
         Object.keys(accountPayload).length > 0
       ) {
@@ -342,10 +288,6 @@ export default function TradeDetailsPage() {
           );
         }
       }
-
-      // ========================================
-      // SUCCESS
-      // ========================================
 
       toast.success(
         "Trade and account updated successfully 🟢"
@@ -394,8 +336,7 @@ export default function TradeDetailsPage() {
       );
 
       // ========================================
-      // STEP 1
-      // DELETE TRADE
+      // STEP 1 - DELETE TRADE
       // ========================================
 
       const tradeResponse = await fetch(
@@ -416,17 +357,22 @@ export default function TradeDetailsPage() {
       }
 
       // ========================================
-      // STEP 2
-      // REVERSE ACCOUNT EFFECT
+      // STEP 2 - REVERSE ACCOUNT EFFECT
       // ========================================
 
       const accountPayload = {};
 
-      if (oldResult === "WIN" && oldTotal > 0) {
+      if (
+        oldResult === "WIN" &&
+        oldTotal > 0
+      ) {
         accountPayload.profit = -oldTotal;
       }
 
-      if (oldResult === "LOSE" && oldTotal > 0) {
+      if (
+        oldResult === "LOSE" &&
+        oldTotal > 0
+      ) {
         accountPayload.loss = -oldTotal;
       }
 
@@ -457,10 +403,6 @@ export default function TradeDetailsPage() {
         }
       }
 
-      // ========================================
-      // SUCCESS
-      // ========================================
-
       toast.success(
         "Trade deleted and account updated."
       );
@@ -470,10 +412,7 @@ export default function TradeDetailsPage() {
         router.refresh();
       }, 700);
     } catch (error) {
-      console.error(
-        "Delete error:",
-        error
-      );
+      console.error("Delete error:", error);
 
       toast.error(
         error.message ||
@@ -573,6 +512,14 @@ export default function TradeDetailsPage() {
 
   const isWin = normalizedResult === "WIN";
   const isLose = normalizedResult === "LOSE";
+
+  const executionRate = Math.min(
+    100,
+    Math.max(
+      0,
+      Number(trade?.executionRate || 0)
+    )
+  );
 
   const displayTotal =
     normalizedResult === "PENDING"
@@ -749,7 +696,9 @@ export default function TradeDetailsPage() {
         <div className="flex-1 overflow-y-auto py-5 pr-1">
           <div className="mx-auto grid w-full max-w-7xl gap-5 xl:grid-cols-[1.2fr_0.8fr]">
 
-            {/* LEFT */}
+            {/* ==================================
+                LEFT SIDE
+            ================================== */}
 
             <div className="flex flex-col gap-5">
 
@@ -770,7 +719,7 @@ export default function TradeDetailsPage() {
                       </h2>
 
                       <p className="text-xs text-gray-500">
-                        Execution and setup information.
+                        Execution and trade information.
                       </p>
                     </div>
                   </div>
@@ -833,9 +782,25 @@ export default function TradeDetailsPage() {
                     />
 
                     <DetailRow
-                      icon={Target}
-                      label="Setup"
-                      value={trade.setup}
+                      icon={Activity}
+                      label="Execution Rate"
+                      value={`${executionRate}%`}
+                      valueClass="text-[#72fc65]"
+                    />
+
+                    <DetailRow
+                      icon={CircleDollarSign}
+                      label="Total"
+                      value={
+                        normalizedResult ===
+                        "PENDING"
+                          ? "—"
+                          : `$${Math.abs(
+                              Number(
+                                trade.total || 0
+                              )
+                            ).toFixed(2)}`
+                      }
                     />
 
                     <DetailRow
@@ -860,61 +825,141 @@ export default function TradeDetailsPage() {
                 </div>
               </section>
 
-              {/* NOTES + PSYCHOLOGY */}
+              {/* EXECUTION RATE */}
 
-              {(trade.notes ||
-                trade.psychology) && (
-                <section className="grid gap-5 md:grid-cols-2">
-                  <div className="group rounded-2xl border border-white/10 bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#72fc6540]">
+              <section className="group relative overflow-hidden rounded-2xl border border-[#72fc6525] bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-500 hover:border-[#72fc6555]">
+                <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[#72fc650d] blur-3xl transition-transform duration-700 group-hover:scale-125" />
+
+                <div className="relative">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#72fc6510] text-[#72fc65] transition-transform duration-300 group-hover:rotate-3">
-                        <FileText size={18} />
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#72fc6540] bg-[#72fc6510] text-[#72fc65]">
+                        <Target size={21} />
                       </div>
 
                       <div>
-                        <h3 className="font-bold text-white">
-                          Trade Notes
-                        </h3>
+                        <h2 className="font-bold text-white">
+                          Execution Rate
+                        </h2>
 
                         <p className="text-[10px] text-gray-500">
-                          Your trade reasoning
+                          How closely the trade followed your plan.
                         </p>
                       </div>
                     </div>
 
-                    <p className="mt-4 text-sm leading-relaxed text-gray-400">
-                      {trade.notes ||
-                        "No trade notes recorded."}
-                    </p>
+                    <div className="text-right">
+                      <p className="text-3xl font-bold text-[#72fc65]">
+                        {executionRate}%
+                      </p>
+
+                      <p className="text-[9px] uppercase tracking-widest text-gray-500">
+                        Execution
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="group rounded-2xl border border-white/10 bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-purple-400/40">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400 transition-transform duration-300 group-hover:rotate-3">
-                        <Brain size={18} />
-                      </div>
+                  <div className="mt-6">
+                    <div className="h-2 overflow-hidden rounded-full bg-white/5">
+                      <div
+                        className="h-full rounded-full bg-[#72fc65] transition-all duration-700"
+                        style={{
+                          width: `${executionRate}%`,
+                        }}
+                      />
+                    </div>
+                  </div>
 
-                      <div>
-                        <h3 className="font-bold text-white">
-                          Psychology
-                        </h3>
+                  <div className="mt-4 grid grid-cols-5 gap-2">
+                    {[20, 40, 60, 80, 100].map(
+                      (value) => (
+                        <div
+                          key={value}
+                          className={`rounded-lg border py-2 text-center text-[9px] font-bold transition-all ${
+                            executionRate >= value
+                              ? "border-[#72fc6540] bg-[#72fc6510] text-[#72fc65]"
+                              : "border-white/5 bg-white/[0.02] text-gray-600"
+                          }`}
+                        >
+                          {value}%
+                        </div>
+                      )
+                    )}
+                  </div>
+                </div>
+              </section>
 
-                        <p className="text-[10px] text-gray-500">
-                          Mental state during entry
-                        </p>
-                      </div>
+              {/* TRADE IMAGE */}
+
+              <section className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-500 hover:border-[#72fc6545]">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#72fc6540] bg-[#72fc6510] text-[#72fc65]">
+                    <ImageIcon size={21} />
+                  </div>
+
+                  <div>
+                    <h2 className="text-lg font-bold text-white">
+                      Trade Image
+                    </h2>
+
+                    <p className="text-xs text-gray-500">
+                      Chart captured during the trade.
+                    </p>
+                  </div>
+                </div>
+
+                {trade.image ? (
+                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+                    <img
+                      src={trade.image}
+                      alt={`${trade.symbol} trade chart`}
+                      className="max-h-[600px] w-full object-contain transition-transform duration-700 group-hover:scale-[1.01]"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/20">
+                    <ImageIcon
+                      size={36}
+                      className="text-gray-600"
+                    />
+
+                    <p className="mt-3 text-sm text-gray-500">
+                      No trade image recorded.
+                    </p>
+                  </div>
+                )}
+              </section>
+
+              {/* TRADE NOTES */}
+
+              {trade.notes && (
+                <section className="group rounded-2xl border border-white/10 bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:border-[#72fc6540]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#72fc6510] text-[#72fc65] transition-transform duration-300 group-hover:rotate-3">
+                      <FileText size={18} />
                     </div>
 
-                    <p className="mt-4 text-sm leading-relaxed text-gray-400">
-                      {trade.psychology ||
-                        "No psychology notes recorded."}
-                    </p>
+                    <div>
+                      <h3 className="font-bold text-white">
+                        Trade Notes
+                      </h3>
+
+                      <p className="text-[10px] text-gray-500">
+                        Your trade reasoning
+                      </p>
+                    </div>
                   </div>
+
+                  <p className="mt-4 text-sm leading-relaxed text-gray-400">
+                    {trade.notes}
+                  </p>
                 </section>
               )}
             </div>
 
-            {/* RIGHT */}
+            {/* ==================================
+                RIGHT SIDE
+            ================================== */}
 
             <aside className="flex flex-col gap-5">
 
@@ -1019,6 +1064,23 @@ export default function TradeDetailsPage() {
                       {trade.rr
                         ? `1:${trade.rr}`
                         : "—"}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between rounded-xl border border-[#72fc6525] bg-[#72fc6508] px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <Target
+                        size={16}
+                        className="text-[#72fc65]"
+                      />
+
+                      <span className="text-xs text-gray-400">
+                        Execution Rate
+                      </span>
+                    </div>
+
+                    <span className="text-sm font-bold text-[#72fc65]">
+                      {executionRate}%
                     </span>
                   </div>
                 </div>
