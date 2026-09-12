@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
+
 import {
   ArrowLeft,
   CalendarDays,
@@ -14,6 +15,7 @@ import {
   Clock3,
   FileText,
   Image as ImageIcon,
+  ImagePlus,
   Loader2,
   PencilLine,
   RefreshCw,
@@ -25,9 +27,19 @@ import {
   Trash2,
   TriangleAlert,
   Trophy,
+  Upload,
+  X,
   XCircle,
   Activity,
 } from "lucide-react";
+
+import {
+  upload,
+  ImageKitAbortError,
+  ImageKitInvalidRequestError,
+  ImageKitServerError,
+  ImageKitUploadNetworkError,
+} from "@imagekit/javascript";
 
 export default function TradeDetailsPage() {
   const params = useParams();
@@ -35,6 +47,7 @@ export default function TradeDetailsPage() {
   const id = params?.id;
 
   const [trade, setTrade] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [updating, setUpdating] = useState(false);
@@ -42,6 +55,15 @@ export default function TradeDetailsPage() {
 
   const [result, setResult] = useState("PENDING");
   const [total, setTotal] = useState("");
+
+  // ==========================================
+  // IMAGE STATE
+  // ==========================================
+
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageProgress, setImageProgress] = useState(0);
 
   // ==========================================
   // FETCH TRADE
@@ -108,6 +130,217 @@ export default function TradeDetailsPage() {
   }, [fetchTrade]);
 
   // ==========================================
+  // CLEAN IMAGE PREVIEW
+  // ==========================================
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
+
+  // ==========================================
+  // IMAGE SELECT
+  // ==========================================
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file.");
+      return;
+    }
+
+    if (file.size > 25 * 1024 * 1024) {
+      toast.error("Image must be smaller than 25MB.");
+      return;
+    }
+
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+
+    setSelectedImage(file);
+    setImagePreview(previewUrl);
+    setImageProgress(0);
+
+    // Immediately upload after selection
+    await uploadTradeImage(file);
+  };
+
+  // ==========================================
+  // UPLOAD IMAGE TO IMAGEKIT
+  // ==========================================
+
+  const uploadTradeImage = async (file) => {
+    if (!file || !id) return;
+
+    try {
+      setUploadingImage(true);
+      setImageProgress(0);
+
+      // ----------------------------------------
+      // STEP 1 - GET IMAGEKIT AUTH
+      // ----------------------------------------
+
+      const authResponse = await fetch("/api/upload-auth", {
+        method: "GET",
+        cache: "no-store",
+      });
+
+      if (!authResponse.ok) {
+        const errorData = await authResponse
+          .json()
+          .catch(() => null);
+
+        throw new Error(
+          errorData?.error ||
+            `ImageKit authentication failed (${authResponse.status})`
+        );
+      }
+
+      const auth = await authResponse.json();
+
+      // ----------------------------------------
+      // STEP 2 - UPLOAD TO IMAGEKIT
+      // ----------------------------------------
+
+      const response = await upload({
+        file,
+        fileName: file.name,
+
+        token: auth.token,
+        signature: auth.signature,
+        expire: auth.expire,
+        publicKey: auth.publicKey,
+
+        useUniqueFileName: true,
+
+        // Store trade screenshots here
+        folder: "/trades",
+
+        onProgress: (event) => {
+          if (event.total) {
+            const percentage = Math.round(
+              (event.loaded / event.total) * 100
+            );
+
+            setImageProgress(percentage);
+          }
+        },
+      });
+
+      console.log("IMAGEKIT UPLOAD RESPONSE:", response);
+      console.log("IMAGE URL:", response.url);
+
+      if (!response.url) {
+        throw new Error(
+          "ImageKit did not return an image URL."
+        );
+      }
+
+      // ----------------------------------------
+      // STEP 3 - SAVE IMAGE URL TO TRADE
+      // ----------------------------------------
+
+      const tradeResponse = await fetch(
+        `/api/trade/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image: response.url,
+          }),
+        }
+      );
+
+      const tradeData = await tradeResponse.json();
+
+      if (!tradeResponse.ok) {
+        throw new Error(
+          tradeData.message ||
+            "Image uploaded, but trade could not be updated."
+        );
+      }
+
+      // ----------------------------------------
+      // STEP 4 - UPDATE LOCAL TRADE
+      // ----------------------------------------
+
+      setTrade((prev) => ({
+        ...prev,
+        image: response.url,
+      }));
+
+      setImageProgress(100);
+
+      toast.success(
+        "Trade screenshot uploaded successfully 🟢"
+      );
+
+      // Clear temporary picker state
+      setSelectedImage(null);
+
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+
+      setImagePreview("");
+    } catch (error) {
+      console.error(
+        "Trade image upload error:",
+        error
+      );
+
+      if (error instanceof ImageKitAbortError) {
+        toast.error("Image upload was cancelled.");
+      } else if (
+        error instanceof ImageKitInvalidRequestError
+      ) {
+        toast.error(
+          `Invalid ImageKit request: ${error.message}`
+        );
+      } else if (
+        error instanceof ImageKitUploadNetworkError
+      ) {
+        toast.error(
+          `Image upload network error: ${error.message}`
+        );
+      } else if (
+        error instanceof ImageKitServerError
+      ) {
+        toast.error(
+          `ImageKit server error: ${error.message}`
+        );
+      } else {
+        toast.error(
+          error?.message ||
+            "Failed to upload trade image."
+        );
+      }
+
+      // Remove failed temporary preview
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+
+      setSelectedImage(null);
+      setImagePreview("");
+      setImageProgress(0);
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  // ==========================================
   // ACCOUNT CHANGE CALCULATION
   // ==========================================
 
@@ -169,6 +402,7 @@ export default function TradeDetailsPage() {
       toast.error(
         "Please select WIN, LOSE, or PENDING."
       );
+
       return;
     }
 
@@ -177,7 +411,6 @@ export default function TradeDetailsPage() {
         ? 0
         : Math.abs(Number(total));
 
-    // Validate amount
     if (
       (result === "WIN" || result === "LOSE") &&
       (total === "" ||
@@ -187,6 +420,7 @@ export default function TradeDetailsPage() {
       toast.error(
         "Please enter a valid amount greater than 0."
       );
+
       return;
     }
 
@@ -220,9 +454,9 @@ export default function TradeDetailsPage() {
     try {
       setUpdating(true);
 
-      // ========================================
+      // ----------------------------------------
       // STEP 1 - UPDATE TRADE
-      // ========================================
+      // ----------------------------------------
 
       const tradeResponse = await fetch(
         `/api/trade/${id}`,
@@ -248,9 +482,9 @@ export default function TradeDetailsPage() {
         );
       }
 
-      // ========================================
+      // ----------------------------------------
       // STEP 2 - UPDATE ACCOUNT
-      // ========================================
+      // ----------------------------------------
 
       const accountPayload = {};
 
@@ -335,9 +569,9 @@ export default function TradeDetailsPage() {
         Number(trade?.total || 0)
       );
 
-      // ========================================
+      // ----------------------------------------
       // STEP 1 - DELETE TRADE
-      // ========================================
+      // ----------------------------------------
 
       const tradeResponse = await fetch(
         `/api/trade/${id}`,
@@ -356,9 +590,9 @@ export default function TradeDetailsPage() {
         );
       }
 
-      // ========================================
-      // STEP 2 - REVERSE ACCOUNT EFFECT
-      // ========================================
+      // ----------------------------------------
+      // STEP 2 - REVERSE ACCOUNT
+      // ----------------------------------------
 
       const accountPayload = {};
 
@@ -521,16 +755,21 @@ export default function TradeDetailsPage() {
     )
   );
 
+  const hasTradeImage =
+    Boolean(trade?.image) &&
+    String(trade.image).toUpperCase() !==
+      "PENDING";
+
   const displayTotal =
     normalizedResult === "PENDING"
       ? "—"
       : isWin
-      ? `+$${Math.abs(
-          Number(trade?.total || 0)
-        ).toFixed(2)}`
-      : `-$${Math.abs(
-          Number(trade?.total || 0)
-        ).toFixed(2)}`;
+        ? `+$${Math.abs(
+            Number(trade?.total || 0)
+          ).toFixed(2)}`
+        : `-$${Math.abs(
+            Number(trade?.total || 0)
+          ).toFixed(2)}`;
 
   const resultStyles = isWin
     ? {
@@ -540,18 +779,18 @@ export default function TradeDetailsPage() {
         icon: CheckCircle2,
       }
     : isLose
-    ? {
-        text: "text-red-400",
-        bg: "bg-red-500/10",
-        border: "border-red-500/30",
-        icon: XCircle,
-      }
-    : {
-        text: "text-yellow-400",
-        bg: "bg-yellow-400/10",
-        border: "border-yellow-400/30",
-        icon: Clock3,
-      };
+      ? {
+          text: "text-red-400",
+          bg: "bg-red-500/10",
+          border: "border-red-500/30",
+          icon: XCircle,
+        }
+      : {
+          text: "text-yellow-400",
+          bg: "bg-yellow-400/10",
+          border: "border-yellow-400/30",
+          icon: Clock3,
+        };
 
   const ResultIcon = resultStyles.icon;
 
@@ -620,8 +859,6 @@ export default function TradeDetailsPage() {
         />
       </video>
 
-      {/* OVERLAYS */}
-
       <div className="fixed inset-0 bg-[#24012c52]" />
 
       <div className="fixed inset-0 bg-linear-to-br from-[#06000e]/35 via-transparent to-black/75" />
@@ -677,9 +914,7 @@ export default function TradeDetailsPage() {
             <RefreshCw
               size={16}
               className={`transition-transform duration-500 group-hover:rotate-180 ${
-                refreshing
-                  ? "animate-spin"
-                  : ""
+                refreshing ? "animate-spin" : ""
               }`}
             />
 
@@ -729,7 +964,8 @@ export default function TradeDetailsPage() {
                       icon={
                         String(
                           trade.direction
-                        ).toUpperCase() === "BUY"
+                        ).toUpperCase() ===
+                        "BUY"
                           ? TrendingUp
                           : TrendingDown
                       }
@@ -738,7 +974,8 @@ export default function TradeDetailsPage() {
                       valueClass={
                         String(
                           trade.direction
-                        ).toUpperCase() === "BUY"
+                        ).toUpperCase() ===
+                        "BUY"
                           ? "text-[#72fc65]"
                           : "text-red-400"
                       }
@@ -797,7 +1034,8 @@ export default function TradeDetailsPage() {
                           ? "—"
                           : `$${Math.abs(
                               Number(
-                                trade.total || 0
+                                trade.total ||
+                                  0
                               )
                             ).toFixed(2)}`
                       }
@@ -889,7 +1127,9 @@ export default function TradeDetailsPage() {
                 </div>
               </section>
 
-              {/* TRADE IMAGE */}
+              {/* ==================================
+                  TRADE IMAGE
+              ================================== */}
 
               <section className="group relative overflow-hidden rounded-2xl border border-white/10 bg-[#06000e]/65 p-5 backdrop-blur-xl transition-all duration-500 hover:border-[#72fc6545]">
                 <div className="mb-5 flex items-center gap-3">
@@ -908,8 +1148,12 @@ export default function TradeDetailsPage() {
                   </div>
                 </div>
 
-                {trade.image ? (
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/30">
+                {/* ==================================
+                    IMAGE EXISTS
+                ================================== */}
+
+                {hasTradeImage ? (
+                  <div className="overflow-hidden rounded-2xl border border-[#72fc6530] bg-black/40">
                     <img
                       src={trade.image}
                       alt={`${trade.symbol} trade chart`}
@@ -917,15 +1161,103 @@ export default function TradeDetailsPage() {
                     />
                   </div>
                 ) : (
-                  <div className="flex min-h-[260px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/20">
-                    <ImageIcon
-                      size={36}
-                      className="text-gray-600"
-                    />
+                  /* ==================================
+                     IMAGE NOT POSTED -> PICKER
+                  ================================== */
 
-                    <p className="mt-3 text-sm text-gray-500">
-                      No trade image recorded.
-                    </p>
+                  <div className="space-y-4">
+                    {!imagePreview ? (
+                      <label
+                        className={`group/image flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-white/10 bg-black/20 px-6 py-12 transition-all duration-300 hover:border-[#72fc6570] hover:bg-[#72fc6508] ${
+                          uploadingImage
+                            ? "pointer-events-none opacity-60"
+                            : ""
+                        }`}
+                      >
+                        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl border border-[#72fc6540] bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/image:scale-110 group-hover/image:rotate-3">
+                          <ImagePlus size={28} />
+                        </div>
+
+                        <p className="text-sm font-semibold text-white">
+                          Select trade screenshot
+                        </p>
+
+                        <p className="mt-1 text-xs text-gray-500">
+                          PNG, JPG, JPEG or WEBP
+                        </p>
+
+                        <div className="mt-5 flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-xs font-semibold text-gray-400 transition group-hover/image:border-[#72fc6540] group-hover/image:text-[#72fc65]">
+                          <Upload size={14} />
+                          Choose Image
+                        </div>
+
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/jpg,image/webp"
+                          onChange={handleImageSelect}
+                          disabled={uploadingImage}
+                          className="hidden"
+                        />
+                      </label>
+                    ) : (
+                      <div className="relative overflow-hidden rounded-2xl border border-[#72fc6530] bg-black/40">
+                        <img
+                          src={imagePreview}
+                          alt="Selected trade screenshot"
+                          className="max-h-[500px] w-full object-contain"
+                        />
+
+                        {/* UPLOAD STATUS */}
+
+                        {uploadingImage && (
+                          <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-black/80 p-4 backdrop-blur-xl">
+                            <div className="mb-2 flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <Loader2
+                                  size={15}
+                                  className="animate-spin text-[#72fc65]"
+                                />
+
+                                <span className="text-xs font-semibold text-white">
+                                  Uploading to ImageKit...
+                                </span>
+                              </div>
+
+                              <span className="text-xs font-bold text-[#72fc65]">
+                                {imageProgress}%
+                              </span>
+                            </div>
+
+                            <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                              <div
+                                className="h-full bg-[#72fc65] transition-all duration-200"
+                                style={{
+                                  width: `${imageProgress}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {!uploadingImage &&
+                      !hasTradeImage && (
+                        <div className="flex items-center justify-center gap-2 rounded-xl border border-yellow-400/20 bg-yellow-400/5 px-4 py-3 text-xs text-yellow-400">
+                          <Clock3 size={14} />
+                          Screenshot has not been posted yet
+                        </div>
+                      )}
+
+                    {uploadingImage && (
+                      <div className="flex items-center justify-center gap-2 rounded-xl border border-[#72fc6525] bg-[#72fc6508] px-4 py-3 text-xs text-[#72fc65]">
+                        <Loader2
+                          size={14}
+                          className="animate-spin"
+                        />
+                        Saving screenshot to this trade...
+                      </div>
+                    )}
                   </div>
                 )}
               </section>
@@ -971,8 +1303,8 @@ export default function TradeDetailsPage() {
                     isWin
                       ? "bg-[#72fc6515]"
                       : isLose
-                      ? "bg-red-500/10"
-                      : "bg-yellow-400/10"
+                        ? "bg-red-500/10"
+                        : "bg-yellow-400/10"
                   }`}
                 />
 
@@ -1039,8 +1371,8 @@ export default function TradeDetailsPage() {
                           isWin
                             ? "text-[#72fc65]"
                             : isLose
-                            ? "text-red-400"
-                            : "text-yellow-400"
+                              ? "text-red-400"
+                              : "text-yellow-400"
                         }`}
                       >
                         {displayTotal}
@@ -1081,6 +1413,35 @@ export default function TradeDetailsPage() {
 
                     <span className="text-sm font-bold text-[#72fc65]">
                       {executionRate}%
+                    </span>
+                  </div>
+
+                  <div className="mt-3 flex items-center justify-between rounded-xl border border-white/5 bg-black/20 px-4 py-3">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon
+                        size={16}
+                        className={
+                          hasTradeImage
+                            ? "text-[#72fc65]"
+                            : "text-yellow-400"
+                        }
+                      />
+
+                      <span className="text-xs text-gray-400">
+                        Screenshot
+                      </span>
+                    </div>
+
+                    <span
+                      className={`text-xs font-bold ${
+                        hasTradeImage
+                          ? "text-[#72fc65]"
+                          : "text-yellow-400"
+                      }`}
+                    >
+                      {hasTradeImage
+                        ? "UPLOADED"
+                        : "PENDING"}
                     </span>
                   </div>
                 </div>
@@ -1130,8 +1491,8 @@ export default function TradeDetailsPage() {
                             ? item === "WIN"
                               ? "border-[#72fc6580] bg-[#72fc6515] text-[#72fc65]"
                               : item === "LOSE"
-                              ? "border-red-400/60 bg-red-500/10 text-red-400"
-                              : "border-yellow-400/60 bg-yellow-400/10 text-yellow-400"
+                                ? "border-red-400/60 bg-red-500/10 text-red-400"
+                                : "border-yellow-400/60 bg-yellow-400/10 text-yellow-400"
                             : "border-white/10 bg-white/[0.03] text-gray-500 hover:border-white/25 hover:text-white"
                         }`}
                       >
