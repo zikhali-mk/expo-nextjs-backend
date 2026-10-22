@@ -124,7 +124,7 @@ Your browser does not support the video tag. </video>
             </div>
 
             {/* Deposits */}
-            <div className="group flex h-[72px] w-[125px] flex-col justify-between rounded-xl border border-[#72fc6525] bg-[#ffffff08] p-2 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#72fc6580] hover:bg-[#72fc6510]">
+            <div className="group flex h-[72px] w-[125px] flex-col justify-between rounded-xl border border-[#72fc6525] bg-[#ffffff08] p-2 shadow-lg shadow-black/20 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-[#72fc6580]  hover:bg-[#72fc6510]">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-medium uppercase tracking-wide text-gray-400">
                   Deposits
@@ -166,7 +166,7 @@ Your browser does not support the video tag. </video>
             {/* Profit and Loss */}
             <div className="flex flex-col gap-2">
               {/* Profit */}
-              <div className="group flex h-[33px] w-[125px] items-center justify-between rounded-lg border border-[#72fc6530] bg-[#72fc650d] px-2 shadow-md backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-[#72fc6580] hover:bg-[#72fc6520]">
+              <div className="group flex h-[33px] w-[125px] items-center justify-between rounded-lg border border-[#72fc6530] bg-[#72fc650d] px-2 shadow-md backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-[#72fc6580]  hover:bg-[#72fc6520]">
                 <div className="flex items-center gap-1">
                   <TrendingUp
                     size={14}
@@ -221,7 +221,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Gold vs US Dollar
           </span>
@@ -231,7 +231,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 75s
           </span>
@@ -241,7 +241,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 50s
           </span>
@@ -251,7 +251,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 25s
           </span>
@@ -261,7 +261,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 15s
           </span>
@@ -271,7 +271,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580]">
+        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
           <span className="text-[14px] font-bold text-white/70">
             Skew Step 5 Up
           </span>
@@ -283,7 +283,7 @@ Your browser does not support the video tag. </video>
       </div>
 
       {/* RULES UI */}
-      <div className="group relative flex w-2/5 flex-col overflow-hidden rounded-xl border border-[#72fc6530] bg-[#06000e]/60 p-4 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-[#72fc6580] hover:shadow-2xl hover:shadow-[#72fc6515]">
+      <div className="group relative flex w-2/5 flex-col overflow-hidden rounded-xl border border-[#72fc6530] bg-[#06000e]/60 p-4 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-[#72fc6580]  hover:shadow-2xl hover:shadow-[#72fc6515]">
         <div className="absolute -right-20 -top-20 h-40 w-40 rounded-full bg-[#72fc6515] blur-3xl transition-all duration-700 group-hover:scale-150" />
 
         {/* Header */}
@@ -317,7 +317,7 @@ Your browser does not support the video tag. </video>
             </span>
           </div>
 
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508]">
+          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508] h-20">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#72fc6510] text-[#72fc65]">
               <Brain size={14} />
             </div>
@@ -338,7 +338,7 @@ Your browser does not support the video tag. </video>
             />
           </div>
 
-          {/* <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508]">
+          {/* <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508] h-20">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#72fc6510] text-[#72fc65]">
               <Target size={14} />
             </div>
@@ -359,7 +359,7 @@ Your browser does not support the video tag. </video>
             />
           </div> */}
 
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508]">
+          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508] h-20">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#72fc6510] text-[#72fc65]">
               <ShieldCheck size={14} />
             </div>
@@ -380,7 +380,7 @@ Your browser does not support the video tag. </video>
             />
           </div>
 
-          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508]">
+          <div className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.03] p-2.5 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6540] hover:bg-[#72fc6508] h-20">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#72fc6510] text-[#72fc65]">
               <BookOpenCheck size={14} />
             </div>
@@ -426,7 +426,7 @@ Your browser does not support the video tag. </video>
       </div>
 
       {/* QUICK LINKS UI */}
-      <div className="group relative flex w-2/5 flex-col overflow-hidden rounded-xl border border-[#72fc6530] bg-[#06000e]/60 p-4 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-[#72fc6580] hover:shadow-2xl hover:shadow-[#72fc6515]">
+      <div className="group relative flex w-2/5 flex-col overflow-hidden rounded-xl border border-[#72fc6530] bg-[#06000e]/60 p-4 backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-[#72fc6580]  hover:shadow-2xl hover:shadow-[#72fc6515]">
         <div className="absolute -bottom-20 -left-20 h-44 w-44 rounded-full bg-[#72fc6515] blur-3xl transition-all duration-700 group-hover:scale-150" />
 
         {/* Header */}
@@ -461,9 +461,9 @@ Your browser does not support the video tag. </video>
           >
             <div className="absolute inset-0 bg-linear-to-br from-[#72fc650d] to-transparent opacity-0 transition-opacity duration-300 group-hover/link:opacity-100" />
 
-            <div className="relative flex flex-col gap-4">
+            <div className="relative flex flex-col gap-4 h-60">
               <div className="flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:rotate-6 group-hover/link:scale-110">
+                <div className="flex h-9 w-9 items-center  justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:rotate-6 group-hover/link:scale-110">
                   <NotebookPen size={18} />
                 </div>
 
@@ -474,9 +474,9 @@ Your browser does not support the video tag. </video>
               </div>
 
               <div>
-                <p className="text-sm font-bold text-white">Journal</p>
+                <p className="text-3xl font-bold text-white">Journal</p>
 
-                <p className="mt-1 text-[10px] text-gray-500">
+                <p className="mt-1 text-[16px] text-gray-500">
                   Record your trades
                 </p>
               </div>
@@ -489,9 +489,9 @@ Your browser does not support the video tag. </video>
           >
             <div className="absolute inset-0 bg-linear-to-br from-[#72fc650d] to-transparent opacity-0 transition-opacity duration-300 group-hover/link:opacity-100" />
 
-            <div className="relative flex flex-col gap-4">
+            <div className="relative flex flex-col gap-4 h-60">
               <div className="flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:scale-110">
+                <div className="flex h-9 w-9 items-center  justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:scale-110">
                   <ChartNoAxesCombined size={18} />
                 </div>
 
@@ -502,9 +502,9 @@ Your browser does not support the video tag. </video>
               </div>
 
               <div>
-                <p className="text-sm font-bold text-white">Trades</p>
+                <p className="text-3xl font-bold text-white">Trades</p>
 
-                <p className="mt-1 text-[10px] text-gray-500">
+                <p className="mt-1 text-[16px] text-gray-500">
                   View trade history
                 </p>
               </div>
@@ -517,9 +517,9 @@ Your browser does not support the video tag. </video>
           >
             <div className="absolute inset-0 bg-linear-to-br from-[#72fc650d] to-transparent opacity-0 transition-opacity duration-300 group-hover/link:opacity-100" />
 
-            <div className="relative flex flex-col gap-4">
+            <div className="relative flex flex-col gap-4 h-60">
               <div className="flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:scale-110">
+                <div className="flex h-9 w-9 items-center  justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:scale-110">
                   <LayoutDashboard size={18} />
                 </div>
 
@@ -530,9 +530,9 @@ Your browser does not support the video tag. </video>
               </div>
 
               <div>
-                <p className="text-sm font-bold text-white">Dashboard</p>
+                <p className="text-3xl font-bold text-white">Dashboard</p>
 
-                <p className="mt-1 text-[10px] text-gray-500">
+                <p className="mt-1 text-[16px] text-gray-500">
                   Track performance
                 </p>
               </div>
@@ -545,9 +545,9 @@ Your browser does not support the video tag. </video>
           >
             <div className="absolute inset-0 bg-linear-to-br from-[#72fc650d] to-transparent opacity-0 transition-opacity duration-300 group-hover/link:opacity-100" />
 
-            <div className="relative flex flex-col gap-4">
+            <div className="relative flex flex-col gap-4 h-60">
               <div className="flex items-center justify-between">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:-rotate-6 group-hover/link:scale-110">
+                <div className="flex h-9 w-9 items-center  justify-center rounded-lg bg-[#72fc6510] text-[#72fc65] transition-all duration-300 group-hover/link:-rotate-6 group-hover/link:scale-110">
                   <ClipboardCheck size={18} />
                 </div>
 
@@ -558,9 +558,9 @@ Your browser does not support the video tag. </video>
               </div>
 
               <div>
-                <p className="text-sm font-bold text-white">Review</p>
+                <p className="text-3xl font-bold text-white">Review</p>
 
-                <p className="mt-1 text-[10px] text-gray-500">
+                <p className="mt-1 text-[16px] text-gray-500">
                   Improve your strategy
                 </p>
               </div>
