@@ -212,7 +212,7 @@ Your browser does not support the video tag. </video>
     {/* Bottom Section */}
     <div className="mt-1 flex h-full w-full justify-between gap-3 rounded-2xl   p-3 pt-1">
       {/* Markets */}
-      <div className="flex w-1/5 flex-col justify-between rounded-xl border border-gray-700 bg-black/20 p-2 ">
+      <div className="flex w-1/5 flex-col justify-between rounded-xl border border-gray-800 bg-black/30 p-2 ">
         <div className="mb-2 flex items-center gap-2 px-2">
           <CandlestickChart size={16} className="text-[#72fc65]" />
 
@@ -221,7 +221,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Gold vs US Dollar
           </span>
@@ -231,7 +231,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 75s
           </span>
@@ -241,7 +241,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 50s
           </span>
@@ -251,7 +251,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 25s
           </span>
@@ -261,7 +261,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Constant Volatility of 15s
           </span>
@@ -271,7 +271,7 @@ Your browser does not support the video tag. </video>
           </span>
         </div>
 
-        <div className="group rounded-xl border border-gray-700 bg-linear-to-r from-[#06000e] to-gray-700 p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-21">
+        <div className="group rounded-xl border border-gray-800 bg-linear-to-r from-[#06000e] to-[#100124] p-1 pl-3 transition-all duration-300 hover:translate-x-1 hover:border-[#72fc6580] h-24">
           <span className="text-[14px] font-bold text-white/70">
             Skew Step 5 Up
           </span>
