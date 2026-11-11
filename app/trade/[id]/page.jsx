@@ -929,7 +929,7 @@ export default function TradeDetailsPage() {
         {/* CONTENT */}
 
         <div className="flex-1 overflow-y-auto py-5 pr-1">
-          <div className="mx-auto grid w-full max-w-7xl gap-5 xl:grid-cols-[1.2fr_0.8fr]">
+          <div className="mx-auto grid w-full max-w-11/12 gap-5 xl:grid-cols-[1.2fr_0.8fr]">
 
             {/* ==================================
                 LEFT SIDE

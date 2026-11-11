@@ -355,7 +355,7 @@ export default function JournalPage() {
 
         <div className="flex-1 overflow-y-auto py-5 pr-1">
 
-          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-5 xl:grid-cols-[1fr_330px]">
+          <div className="mx-auto grid w-full max-w-11/12 grid-cols-1 gap-5 xl:grid-cols-[1fr_330px]">
 
             {/* FORM */}
 

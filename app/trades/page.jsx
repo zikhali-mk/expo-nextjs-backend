@@ -163,7 +163,7 @@ export default function TradesPage() {
         <source src="/video.mp4" type="video/mp4" />
       </video>
 
-      {/* DARK OVERLAY */}
+      {/* DARK OVERLAY max-w */}
       <div className="absolute inset-0 bg-[#24012c52]" />
 
       {/* EXTRA DEPTH */}
@@ -226,7 +226,7 @@ export default function TradesPage() {
         {/* ================= CONTENT ================= */}
 
         <div className="flex-1 overflow-y-auto py-5 pr-1">
-          <div className="mx-auto flex w-full max-w-7xl flex-col gap-5">
+          <div className="mx-auto flex w-full max-w-11/12 flex-col gap-5">
             {/* ================= STATS ================= */}
 
             <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
